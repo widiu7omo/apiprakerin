@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class TahunAkademik extends Model
 {
     //
@@ -13,7 +15,7 @@ class TahunAkademik extends Model
     public $incrementing = false;
     public $timestamps = false;
 
-    public function mahasiswas(){
+    public function mahasiswas() :HasMany {
         return $this->hasMany(Mahasiswa::class,'id_tahun_akademik');
     }
 }

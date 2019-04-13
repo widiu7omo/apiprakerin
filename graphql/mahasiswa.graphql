@@ -1,0 +1,49 @@
+extend type Query {
+    mahasiswas(id_program_studi: String @eq id_tahun_akademik: String @eq): [Mahasiswa] @all
+    mahasiswa(nim: ID @eq): Mahasiswa @find
+}
+extend type Mutation {
+    inMahasiswa(input:insertMahasiswa!): Mahasiswa @create(flatten:true)
+    createMahasiswa(input:insertMahasiswa!): Mahasiswa @create(flatten:true)
+    updateMahasiswa(input:insertMahasiswa!): Mahasiswa @update(flatten:true)
+}
+
+input insertMahasiswa {
+    nim:ID!
+    id_tahun_akademik : String
+    jenis_kelamin_mhs : String
+    id_program_studi : String
+    username : String
+    nama_mahasiswa : String
+    alamat_mhs : String
+    email_mhs : String
+    tempat_lahir_mhs : String
+    tanggal_lahir_mhs : String
+    no_hp_mahasiswa : String
+    nama_orangtua_mhs : String
+    no_hp_orangtua_mhs : String
+    akun:createAkunRelation
+    tahunakademik:createTARelation
+    prodi:createProdiRelation
+    user: createUserRelation
+}
+
+type Mahasiswa {
+    nim: ID!
+    id_tahun_akademik: String
+    jenis_kelamin_mhs: String
+    id_program_studi: String
+    username: String
+    nama_mahasiswa: String
+    alamat_mhs: String
+    email_mhs: String
+    tempat_lahir_mhs: String
+    tanggal_lahir_mhs: String
+    no_hp_mahasiswa: String
+    nama_orangtua_mhs: String
+    no_hp_orangtua_mhs: String
+    tahunakademik:TahunAkademik @belongsTo
+    akun: Akun @belongsTo
+    prodi: Prodi @belongsTo
+    user: User @belongsTo
+}

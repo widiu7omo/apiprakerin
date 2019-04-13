@@ -1,3 +1,5 @@
+#import mahasiswa.graphql
+#import auth.graphql
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-01-01 13:00:00`."
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
@@ -5,44 +7,124 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
 type Query {
-    users: [User!]! @paginate(type: "paginator" model: "App\\User")
-    user(id: ID @eq): User @find(model: "App\\User")
-    mahasiswas: [Mahasiswa] @all
-    mahasiswa(id: ID @eq): Mahasiswa @find
+    akuns: [Akun] @all
+    akun(username: ID ,password:String @eq): Akun @find
+    prodis: [Prodi] @all
+    prodi(id_progam_studi:ID @eq): Prodi @find
     tahunakademiks:[TahunAkademik] @all
     tahunakademik(id_tahun_akademik:ID @eq): TahunAkademik @find
-    keys: [Keys] @all
+    me: User @middleware(checks:["auth:api"]) @auth
 }
 type Mutation {
     inTahunAkademik(input:insertTahunAkademik!) : TahunAkademik @create(flatten:true)
+    inAkun(input:insertAkun!):Akun @create(flatten:true)
+    inProgramStudi(input:insertProgramStudi!):Prodi @create(flatten:true)
+    inTahunAkademikWithMahasiswa(input:insertTahunAkademik!): TahunAkademik @create(flatten:true)
+    upTahunAkademikWithMahasiswa(input:insertTahunAkademik!): TahunAkademik @update(flatten:true)
+}
+
+input insertProgramStudi {
+    id_program_studi: ID!
+    nama_program_studi: String
+    mahasiswas:createMahasiswaRelation
 }
 
 input insertTahunAkademik {
-    id_tahun_akademik:String!
+    id_tahun_akademik:ID!
     tahun_akademik:String
+    mahasiswas:createMahasiswaRelation
 }
 
-type Keys {
-    id: ID!
-    key: String
-    level: String
+input createMahasiswaRelation{
+    create:[insertMahasiswa!]!
 }
+
+input createProdiRelation {
+    connect: ID
+    create: insertProgramStudi
+}
+
+input createTARelation {
+    connect: ID
+    create: insertTahunAkademik
+}
+
+input createAkunRelation {
+    connect: ID
+    create: insertAkun
+    # update still needed
+}
+
+input createUserRelation{
+    connect: ID
+    create: insertUser
+}
+
+input createLevelRelation {
+    connect:ID
+    create:[insertLevel]
+}
+
+input insertAkun {
+    username:String!
+    password:String! @bcrypt
+    mahasiswas:createMahasiswaRelation
+    pivotlevels:createLevelRelation!
+}
+
+input insertUser {
+    username:String!
+    password:String! @bcrypt
+    mahasiswas:createMahasiswaRelation
+    pivotlevels:createLevelRelation!
+}
+
+input createMasterLevelRelation {
+    connect:ID
+}
+
+input insertLevel {
+    id_level:ID
+    nama_level:String
+    masterlevel:createMasterLevelRelation
+}
+
+type Prodi {
+    id_program_studi: ID!
+    nama_program_studi: String
+    mahasiswa: [Mahasiswa] @hasMany
+}
+
 type TahunAkademik {
     id_tahun_akademik:ID!
     tahun_akademik: String
     mahasiswas:[Mahasiswa] @hasMany
 }
 
-type Mahasiswa {
-    nim: ID!
-    nama_mahasiswa: String
-    tahunakademik:TahunAkademik @belongsTo
+type Akun {
+    username: ID!
+    password: String
+    mahasiswas: [Mahasiswa] @hasMany
+    pivotlevels: [Pivotlevel] @hasMany
 }
 
 type User {
-    id: ID!
-    name: String!
-    email: String!
-    created_at: DateTime!
-    updated_at: DateTime!
+    username: ID!
+    password: String
+    mahasiswas: [Mahasiswa] @hasMany
+    pivotlevels: [Pivotlevel] @hasMany
+#   Pegawai not yet
+}
+
+type Masterlevel {
+    id_master_level:ID!
+    nama_master_level:String
+    pivotlevels:[Pivotlevel] @hasMany
+}
+
+type Pivotlevel {
+    id_level:ID!
+    nama_level:String
+    akun: Akun @belongsTo
+    masterlevel: Masterlevel @belongsTo
 }

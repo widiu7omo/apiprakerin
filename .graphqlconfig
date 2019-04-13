@@ -1,0 +1,19 @@
+{
+  "schemaPath": "./graphql/schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "Default (http://localhost:8080/graphql)": {
+        "url": "http://localhost:8080/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        }
+      },
+      "Simprakerin (http://api.simprakerin.dio/graphql)": {
+        "url": "http://api.simprakerin.dio/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        }
+      }
+    }
+  }
+}
