@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Pivotlevel;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class PivotlevelController extends Controller
 {
     /**
@@ -81,5 +81,9 @@ class PivotlevelController extends Controller
     public function destroy(Pivotlevel $pivotlevel)
     {
         //
+    }
+
+    public function getLevelUser($username){
+        return DB::table('tb_akun')->leftJoin('tb_level','tb_akun.id', '=' ,'tb_level.akun_id')->leftJoin('tb_master_level','tb_level.id_master_level','=','tb_master_level.id_master_level')->select('nama_master_level as name')->where('tb_akun.username','=',$username)->get();
     }
 }

@@ -45,7 +45,6 @@ class User extends Authenticatable
     {
         return $this->where('username', $username)->first();
     }
-
     public function mahasiswas() : HasMany{
         return $this->hasMany(Mahasiswa::class,'akun_id');
     }

@@ -12,8 +12,12 @@ type AuthPayload {
     refresh_token: String!
     expires_in: Int!
     token_type: String!
+    level:[Level]
 }
 
+type Level {
+    name:String
+}
 type LogoutResponse {
     status: String!
     message: String
